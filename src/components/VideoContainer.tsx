@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { formatTimestamp } from "./utils";
 import { RootState } from "../store";
 
 import "./styles.scss";
@@ -35,7 +36,7 @@ export const VideoContainer = () => {
     // задача функции определить нужен ли ререндер компоненту для обновления прямоугольников
     const id = setInterval(() => {
       // если nextTimestamp меньше чем текущее время или последнее событие больше текущего времени
-      // пересчитать nextTimestamp и обновить currentTimestamp
+      // найти ближайшее начало события и обновить currentTimestamp
       if (
         videoRef.current &&
         (nextTimestamp <= videoRef.current.currentTime * 1000 ||
@@ -53,7 +54,7 @@ export const VideoContainer = () => {
       }
 
       // если timeEnd меньше чем текущее время или последнее событие больше текущего времени
-      // пересчитать timeEnd
+      // найти ближайшее окончание события
       if (
         videoRef.current &&
         (timeEnd <= videoRef.current.currentTime * 1000 ||
@@ -81,25 +82,6 @@ export const VideoContainer = () => {
     if (videoRef.current?.paused) {
       videoRef.current.play();
     } else videoRef.current?.pause();
-  };
-
-  const formatTimestamp = (timestamp: number) => {
-    const minutes = Math.floor(timestamp / 1000 / 60);
-    const seconds = Math.floor(timestamp / 1000 - minutes * 60);
-    const milliseconds = Math.floor(
-      timestamp - minutes * 60 * 1000 - seconds * 1000
-    );
-
-    const minStr = minutes > 9 ? minutes.toString() : "0" + minutes;
-    const secStr = seconds > 9 ? seconds.toString() : "0" + seconds;
-    const msStr =
-      milliseconds > 99
-        ? milliseconds.toString()
-        : milliseconds > 9
-        ? "0" + milliseconds.toString()
-        : "00" + milliseconds.toString();
-
-    return `${minStr}:${secStr}:${msStr}`;
   };
 
   return (
